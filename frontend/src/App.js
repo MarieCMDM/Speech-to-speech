@@ -8,7 +8,6 @@ function App() {
   const mediaRecorderRef = useRef(null);
   const audioChunks = useRef([]);
 
-  // Funzione per iniziare la registrazione
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -19,12 +18,10 @@ function App() {
     setIsRecording(true);
   };
 
-  // Funzione per gestire i chunk di audio
   const handleDataAvailable = async (event) => {
     if (event.data.size > 0) {
       audioChunks.current.push(event.data);
 
-      // Invia l'audio al backend per la trascrizione
       const formData = new FormData();
       formData.append("audio", event.data, "audio.wav");
 
@@ -39,13 +36,11 @@ function App() {
     }
   };
 
-  // Funzione per gestire la fine della registrazione
   const handleStopRecording = async () => {
     const blob = new Blob(audioChunks.current, { type: "audio/wav" });
     const audioUrl = URL.createObjectURL(blob);
     setAudioSrc(audioUrl);
 
-    // Invia l'ultima parte dell'audio al backend
     const formData = new FormData();
     formData.append("audio", blob, "final_audio.wav");
 
