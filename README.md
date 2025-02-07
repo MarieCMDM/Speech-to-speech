@@ -3,5 +3,5 @@ React app and flask backend for a speech-to-speech webapp, uning openai compatib
 
 
 # start front end in development mode:
-HTTPS=true npm start
+HTTPS=true HOST=0.0.0.0 npm start
 

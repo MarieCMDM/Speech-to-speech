@@ -7,6 +7,7 @@ function App() {
   const [audioSrc, setAudioSrc] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunks = useRef([]);
+  let recordingState = false
 
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -14,22 +15,24 @@ function App() {
     mediaRecorderRef.current = new MediaRecorder(stream);
     mediaRecorderRef.current.ondataavailable = handleDataAvailable;
     mediaRecorderRef.current.onstop = handleStopRecording;
-    mediaRecorderRef.current.start();
+    mediaRecorderRef.current.start(1000);
     setIsRecording(true);
+    recordingState = true;
   };
 
   const handleDataAvailable = async (event) => {
-    if (event.data.size > 0) {
+    console.log(recordingState, event.data)
+    if (event.data.size > 0 && recordingState) {
       audioChunks.current.push(event.data);
-
+      const blob = new Blob(audioChunks.current, { type: "audio/ogg; codecs=opus" });
       const formData = new FormData();
-      formData.append("audio", event.data, "audio.wav");
+      formData.append("audio", blob, "audio.webm");
 
       try {
-        const response = await axios.post("http://localhost:5000/transcribe", formData, {
+        const response = await axios.post("http://192.168.15.19:5000/transcribe", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        setTranscription((prev) => prev + " " + response.data.text);
+        setTranscription((prev) => response.data.text);
       } catch (error) {
         console.error("Error sending audio chunk:", error);
       }
@@ -37,7 +40,8 @@ function App() {
   };
 
   const handleStopRecording = async () => {
-    const blob = new Blob(audioChunks.current, { type: "audio/wav" });
+    recordingState = false;
+    const blob = new Blob(audioChunks.current, { type: "audio/ogg; codecs=opus" });
     const audioUrl = URL.createObjectURL(blob);
     setAudioSrc(audioUrl);
 
@@ -45,7 +49,7 @@ function App() {
     formData.append("audio", blob, "final_audio.wav");
 
     try {
-      const response = await axios.post("http://localhost:5000/finish", formData, {
+      const response = await axios.post("http://192.168.15.19:5000/finish", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setTranscription((prev) => prev + " " + response.data.text);
