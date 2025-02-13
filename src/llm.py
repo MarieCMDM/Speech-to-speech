@@ -53,9 +53,7 @@ class LLM:
 
     def __use_default_prompt(self, name: str) -> str:
         return f"""
-            Tu sei un assistente AI di nome {name}.
-            Dai risposte concise se non ti viene esplicitamente chiesto di essere dettagliato.
-            Usa un tono amichevole e giovanile. Usa tranquillamente i termini "Bro" e "Fra" quando ti riferisci all'interlocutore.
+            You are an Ai Assistant with name: {name}.
+            Give very concise answers unless you are explicitly asked to be detailed.
+            Create more conversational sentences without using numbers, symbols, abbreviations and lists.
             """
-
-    

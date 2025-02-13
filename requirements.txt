@@ -1,0 +1,10 @@
+Flask==3.1.0
+Flask-Cors==5.0.0
+auralis==0.2.8.post2
+openai-whisper==20240930
+langchain==0.3.17
+langchain-core==0.3.34
+langchain-openai==0.3.4
+langchain-text-splitters==0.3.6
+python-dotenv
+pyopenssl
